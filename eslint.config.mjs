@@ -28,6 +28,7 @@ export default [
       "@typescript-eslint/no-unused-vars": "off",
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
+      "prettier/prettier": ["error", { endOfLine: "auto" }],
     },
   },
   eslintPluginPrettierRecommended,
