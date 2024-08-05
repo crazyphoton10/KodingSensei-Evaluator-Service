@@ -17,21 +17,25 @@ export default [
     ...jest.configs["flat/recommended"],
     rules: {
       ...jest.configs["flat/recommended"].rules,
-      "jest/prefer-expect-assertions": "off",
-    },
+      "jest/prefer-expect-assertions": "off"
+    }
   },
   {
     plugins: {
-      "simple-import-sort": simpleImportSort,
+      "simple-import-sort": simpleImportSort
     },
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
       // "simple-import-sort/imports": "error",
       // "simple-import-sort/exports": "error",
-      "prettier/prettier": ["error", { endOfLine: "auto" }],
-    },
+      "prettier/prettier": [
+        "error",
+        { endOfLine: "auto", trailingComma: "none" }
+      ],
+      "comma-dangle": ["error", "never"]
+    }
   },
-  eslintPluginPrettierRecommended,
+  eslintPluginPrettierRecommended
 ];
 
 //npx eslint . --fix
