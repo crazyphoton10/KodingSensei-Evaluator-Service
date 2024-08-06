@@ -4,13 +4,19 @@ import serverConfig from "./config/server.config";
 import apiRouter from "./routes";
 import sampleProducer from "./producers/sampleProducer";
 import sampleWorker from "./workers/sampleWorker";
+import serverAdapter from "./config/bullBoard.config";
 
 const app: Express = express();
+
+app.use("/ui", serverAdapter.getRouter());
 
 app.use("/api", apiRouter);
 
 app.listen(serverConfig.PORT, () => {
   console.log(`Server started at PORT ${serverConfig.PORT}`);
+  console.log(
+    `Bullboard dashboard running on http://localhost:${serverConfig.PORT}/ui`
+  );
 
   sampleProducer(
     "SampleJob",
