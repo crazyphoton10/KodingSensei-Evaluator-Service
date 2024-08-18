@@ -5,6 +5,7 @@ import apiRouter from "./routes";
 import sampleProducer from "./producers/sampleProducer";
 import sampleWorker from "./workers/sampleWorker";
 import serverAdapter from "./config/bullBoard.config";
+import runPython from "./containers/runPythonDocker";
 
 const app: Express = express();
 
@@ -23,4 +24,11 @@ app.listen(serverConfig.PORT, () => {
   );
 
   sampleWorker("SampleQueue");
+
+  const code = `x=input()
+y=input()
+print('Value of x is ', x)
+print('Value of y is ', y)
+for i in range(int(x)): print(i)`;
+  runPython(code, "10\n20");
 });
