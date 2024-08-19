@@ -1,24 +1,22 @@
-import Docker from "dockerode";
-import { TestCases } from "../types/testCases";
 import createContainer from "./containerFactory";
-import { PYTHON_IMAGE } from "../utils/constants";
+import { JAVA_IMAGE } from "../utils/constants";
 import decodeDockerStream from "./dockerHelper";
 
-async function runPython(code: string, inputTestCase: string) {
+async function runJava(code: string, inputTestCase: string) {
   const rawLogBuffer: Buffer[] = [];
-  console.log("Initialising a new python docker container");
-  const runCommand = `echo "${code}" > test.py && echo "${inputTestCase}" | python3 test.py`;
-  const pythonDockerContainer = await createContainer(PYTHON_IMAGE, [
+  console.log("Initialising a new Java docker container");
+  const runCommand = `echo "${code.replace(/'/g, `'\\"`)}" > Main.java && javac Main.java && echo "${inputTestCase.replace(/'/g, `'\\"`)}" | java Main`;
+  const javaDockerContainer = await createContainer(JAVA_IMAGE, [
     "/bin/sh",
     "-c",
     runCommand
   ]);
-  //booting python Docker Container
-  await pythonDockerContainer.start();
+  //booting java Docker Container
+  await javaDockerContainer.start();
 
   console.log("Started the docker container");
 
-  const loggerStream = await pythonDockerContainer.logs({
+  const loggerStream = await javaDockerContainer.logs({
     stdout: true,
     stderr: true,
     timestamps: false,
@@ -35,13 +33,12 @@ async function runPython(code: string, inputTestCase: string) {
       const completeBuffer = Buffer.concat(rawLogBuffer);
       const decodedStream = decodeDockerStream(completeBuffer);
       console.log(decodedStream);
-      // console.log(decodedStream.stdout);
+      console.log(decodedStream.stdout);
       res(decodedStream);
     });
   });
-  await pythonDockerContainer.remove();
+  await javaDockerContainer.remove();
 
-  return pythonDockerContainer;
+  return javaDockerContainer;
 }
-export default runPython;
-// , inputData: TestCases
+export default runJava;

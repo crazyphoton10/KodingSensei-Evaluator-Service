@@ -6,6 +6,7 @@ import sampleProducer from "./producers/sampleProducer";
 import sampleWorker from "./workers/sampleWorker";
 import serverAdapter from "./config/bullBoard.config";
 import runPython from "./containers/runPythonDocker";
+import runJava from "./containers/runJavaDocker";
 
 const app: Express = express();
 
@@ -25,10 +26,16 @@ app.listen(serverConfig.PORT, () => {
 
   sampleWorker("SampleQueue");
 
-  const code = `x=input()
-y=input()
-print('Value of x is ', x)
-print('Value of y is ', y)
-for i in range(int(x)): print(i)`;
-  runPython(code, "10\n20");
+  const code = `
+  import java.util.*;
+  public class Main{
+    public static void main(String[] args){
+      Scanner scn=new Scanner (System.in);
+      int input=scn.nextInt();
+      for(int i=0; i<input; i++){
+        System.out.println(i);
+      }
+    }
+  }`;
+  runJava(code, "10");
 });
