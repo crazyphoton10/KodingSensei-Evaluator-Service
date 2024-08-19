@@ -1,22 +1,22 @@
 import createContainer from "./containerFactory";
-import { JAVA_IMAGE } from "../utils/constants";
+import { CPP_IMAGE } from "../utils/constants";
 import decodeDockerStream from "./dockerHelper";
 
-async function runJava(code: string, inputTestCase: string) {
+async function runCpp(code: string, inputTestCase: string) {
   const rawLogBuffer: Buffer[] = [];
-  console.log("Initialising a new Java docker container");
-  const runCommand = `echo '${code.replace(/'/g, `'\\"`)}' > Main.java && javac Main.java && echo '${inputTestCase.replace(/'/g, `'\\"`)}' | java Main`;
-  const javaDockerContainer = await createContainer(JAVA_IMAGE, [
+  console.log("Initialising a new CPP docker container");
+  const runCommand = `echo '${code}' > main.cpp && g++ main.cpp -o main && echo '${inputTestCase}' | stdbuf -oL -eL ./main`;
+  const cppDockerContainer = await createContainer(CPP_IMAGE, [
     "/bin/sh",
     "-c",
     runCommand
   ]);
   //booting java Docker Container
-  await javaDockerContainer.start();
+  await cppDockerContainer.start();
 
   console.log("Started the docker container");
 
-  const loggerStream = await javaDockerContainer.logs({
+  const loggerStream = await cppDockerContainer.logs({
     stdout: true,
     stderr: true,
     timestamps: false,
@@ -37,8 +37,8 @@ async function runJava(code: string, inputTestCase: string) {
       res(decodedStream);
     });
   });
-  await javaDockerContainer.remove();
+  await cppDockerContainer.remove();
 
-  return javaDockerContainer;
+  return cppDockerContainer;
 }
-export default runJava;
+export default runCpp;

@@ -2,11 +2,9 @@ import express, { Express } from "express";
 import bodyParser from "body-parser";
 import serverConfig from "./config/server.config";
 import apiRouter from "./routes";
-import sampleProducer from "./producers/sampleProducer";
 import sampleWorker from "./workers/sampleWorker";
 import serverAdapter from "./config/bullBoard.config";
-import runPython from "./containers/runPythonDocker";
-import runJava from "./containers/runJavaDocker";
+import runCpp from "./containers/runCppDocker";
 
 const app: Express = express();
 
@@ -27,15 +25,17 @@ app.listen(serverConfig.PORT, () => {
   sampleWorker("SampleQueue");
 
   const code = `
-  import java.util.*;
-  public class Main{
-    public static void main(String[] args){
-      Scanner scn=new Scanner (System.in);
-      int input=scn.nextInt();
-      for(int i=0; i<input; i++){
-        System.out.println(i);
-      }
-    }
+  #include <iostream>
+  using namespace std;
+  
+  int main(){
+  int x;
+  cin>>x;
+  cout<<"Value of x is "<< x<< endl;
+  for (int i=0;i<x;i++){
+  cout << i<<endl;
+  }
+  return 0;
   }`;
-  runJava(code, "10");
+  runCpp(code, "10");
 });
