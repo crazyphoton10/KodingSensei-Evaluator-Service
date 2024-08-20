@@ -1,12 +1,12 @@
-import Docker from "dockerode";
-import { TestCases } from "../types/testCases";
 import createContainer from "./containerFactory";
 import { PYTHON_IMAGE } from "../utils/constants";
 import decodeDockerStream from "./dockerHelper";
+import pullImage from "./pullImage";
 
 async function runPython(code: string, inputTestCase: string) {
   const rawLogBuffer: Buffer[] = [];
   console.log("Initialising a new python docker container");
+  await pullImage(PYTHON_IMAGE);
   const runCommand = `echo "${code}" > test.py && echo "${inputTestCase}" | python3 test.py`;
   const pythonDockerContainer = await createContainer(PYTHON_IMAGE, [
     "/bin/sh",
